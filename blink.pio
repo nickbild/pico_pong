@@ -8,19 +8,37 @@
 ; GPIO 0 = vsync
 ; GPIO 1 = trigger horizontal draw
 ;
-.program blinky
-    wait 1 irq 0
-.wrap_target
-    set pins, 2          ; turn off vsync / start horizontal line
-    pull block           ; vsync clocks: 7,999 - 1 setup clock
-    out x, 32
-    pull block           ; visible + front porch: 1,959,999 - 6 setup clocks
+.program blinky    
+.wrap_target    
+    pull block           ; visible: 1,919,999 - 3 setup clocks
     out y, 32
+    set pins, 2          ; start horizontal line    
+
+visibleDelay:            ; visible screen
+    jmp y-- visibleDelay
+    
     set pins, 0          ; clear start horizontal line
 
-topDelay:               ; visible screen + front porch
-    jmp y-- topDelay
-    
+; front porch delay (40,000 clocks)
+; 32*32 (loops) + 32 (reset x) = 1056
+; 40,000 - 1056 = 38,944 remaining
+; each clock in innermost loop is * 1024; 38944 / 1024 = 38.03125
+; 38 clocks in innermost loop, 32 additional clocks
+
+    set x, 31
+    set y, 31
+frontPorchDelay2:
+frontPorchDelay1:
+    nop [31]
+    nop [5]
+    jmp x-- frontPorchDelay1
+    set x, 31
+    nop     ; 32 additional clocks
+    jmp y-- frontPorchDelay2
+
+; vsync setup
+    pull block           ; vsync clocks: 7,999 - 3 setup clocks
+    out x, 32
     set pins, 1         ; turn on vsync
 
 vSync:                  ; v sync pulse period
@@ -82,14 +100,12 @@ backLoop3:
     wait 1 pin 1
 
     ; visible (640)
-    set x, 31
-    set y, 19
-visible2:
-visible1:
+    pull block
+    out x, 32
+
+visible:
     set pins, 2 [3]         ; pixel values
-    jmp x-- visible1
-    set x, 31
-    jmp y-- visible2
+    jmp x-- visible
 
     set pins, 0             ; pixel off
 

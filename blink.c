@@ -8,11 +8,13 @@
 #include "hardware/dma.h"
 
 #define DMA_CHANNEL 0
+#define DMA_CHANNEL_H 1
 
 void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq);
 void horizontal_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
 void trigger_pio_interrupt(PIO pio, uint sm, uint offset);
 void dma_handler();
+void dma_handler_h();
 
 int main() {
     stdio_init_all();
@@ -37,7 +39,7 @@ int main() {
 
 
     blink_pin_forever(pio, 0, offset, 0, 100000000);
-    horizontal_forever(pio1, 1, offset4, 1, 100000000, 3);
+    horizontal_forever(pio1, 0, offset4, 1, 100000000, 3);
     
     // blink_pin_forever(pio1, 0, offset, 1, 100000000);
     // clock_pin_forever(pio, 0, offset3, 0, 100000000);
@@ -49,7 +51,6 @@ int main() {
     channel_config_set_read_increment(&channel_config, true);
     channel_config_set_write_increment(&channel_config, false);
     channel_config_set_dreq(&channel_config, pio_get_dreq(pio, sm, true));
-    // channel_config_set_ring(&channel_config, false, 1);
     dma_channel_configure(DMA_CHANNEL,
                           &channel_config,
                           &pio->txf[sm],
@@ -63,7 +64,28 @@ int main() {
     dma_handler();
 
 
-    trigger_pio_interrupt(pio, 3, offset2);
+
+
+    
+    dma_channel_config channel_config_h = dma_channel_get_default_config(DMA_CHANNEL_H);
+    channel_config_set_transfer_data_size(&channel_config_h, DMA_SIZE_32);
+    channel_config_set_read_increment(&channel_config_h, true);
+    channel_config_set_write_increment(&channel_config_h, false);
+    channel_config_set_dreq(&channel_config_h, pio_get_dreq(pio1, sm, true));
+    dma_channel_configure(DMA_CHANNEL_H,
+                          &channel_config_h,
+                          &pio1->txf[sm],
+                          NULL,
+                          1,
+                          false);
+    
+    dma_channel_set_irq1_enabled(DMA_CHANNEL_H, true);
+    irq_set_exclusive_handler(DMA_IRQ_1, dma_handler_h);
+    irq_set_enabled(DMA_IRQ_1, true);
+    dma_handler_h();
+
+
+    // trigger_pio_interrupt(pio, 3, offset2);
     // pio->irq = 1u << sm;
 
     while(true) {
@@ -74,9 +96,15 @@ int main() {
 }
 
 void dma_handler() {
-    static uint32_t src[] = {7998, 1959993};
+    static uint32_t src[] = {1919996, 7996};
     dma_hw->ints0 = 1u << DMA_CHANNEL;
     dma_channel_set_read_addr(DMA_CHANNEL, &src[0], true);
+}
+
+void dma_handler_h() {
+    static uint32_t src_h[] = {639};
+    dma_hw->ints0 = 1u << DMA_CHANNEL_H;
+    dma_channel_set_read_addr(DMA_CHANNEL_H, &src_h[0], true);
 }
 
 void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq) {
