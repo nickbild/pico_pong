@@ -1,0 +1,166 @@
+; Visible, 480
+; Front porch 10
+; Sync pulse, 2 lines
+; Back porch, 33
+;
+; 4000 clocks per line
+;
+; GPIO 0 = vsync
+; GPIO 1 = trigger horizontal draw
+;
+.program blinky
+    wait 1 irq 0
+.wrap_target
+    set pins, 2          ; turn off vsync / start horizontal line
+    pull block           ; vsync clocks: 7,999 - 1 setup clock
+    out x, 32
+    pull block           ; visible + front porch: 1,959,999 - 6 setup clocks
+    out y, 32
+    set pins, 0          ; clear start horizontal line
+
+topDelay:               ; visible screen + front porch
+    jmp y-- topDelay
+    
+    set pins, 1         ; turn on vsync
+
+vSync:                  ; v sync pulse period
+    jmp x-- vSync
+
+    set pins, 0          ; turn off vsync
+
+; back porch delay (132,000 clocks)
+; 32*32 (loops) + 32 (reset x) = 1056
+; 132,000 - 1056 = 130,944 remaining
+; each clock in innermost loop is * 1024; 130,944 / 1024 = 127.875
+; 127 clocks in innermost loop, 896 additional clocks
+    
+    set x, 31
+    set y, 31
+backLoop2:
+backLoop1:
+    nop [31]
+    nop [31]
+    nop [31]
+    nop [30]
+    jmp x-- backLoop1
+    set x, 31
+    jmp y-- backLoop2
+
+; 896 additional clocks
+    set y, 27
+backLoop3:
+    nop [30]
+    jmp y-- backLoop3
+
+.wrap
+
+
+
+
+
+.program interrupt
+.wrap_target
+    irq 0
+.wrap
+
+
+
+
+
+; Visible area	640
+; Front porch	16
+; Sync pulse	96
+; Back porch	48
+;
+; GPIO 1 = wait for horizontal draw start
+; GPIO 2 = pixel value
+; GPIO 3 = hsync
+
+.program horizontal
+.side_set 1 opt
+.wrap_target
+    wait 1 pin 1
+
+    ; visible (640)
+    set x, 31
+    set y, 19
+visible2:
+visible1:
+    set pins, 2 [3]         ; pixel values
+    jmp x-- visible1
+    set x, 31
+    jmp y-- visible2
+
+    set pins, 0             ; pixel off
+
+    ; front porch (16)
+    set x, 15
+frontPorch:
+    nop [3]
+    jmp x-- frontPorch
+ 
+    ; horizontal sync (96)
+    set x, 30 side 1 [4] ; turn on h sync
+hSync1:
+    nop [3]
+    jmp x-- hSync1
+
+    set x, 30 [4]
+hSync2:
+    nop [3]
+    jmp x-- hSync2
+
+    set x, 30 [4]
+hSync3:
+    nop [3]
+    jmp x-- hSync3
+
+    ; back porch (48)
+    set x, 31 side 0 [4] ; turn off h sync
+backPorch1:
+    nop [3]
+    jmp x-- backPorch1
+
+    set x, 13 [4]
+backPorch2:
+    nop [3]
+    jmp x-- backPorch2
+
+.wrap
+
+
+
+;    pull block
+;    out pins, 32
+
+
+
+% c-sdk {
+void blink_program_init(PIO pio, uint sm, uint offset, uint pin) {
+   pio_gpio_init(pio, pin); // needed if pin is output
+   pio_gpio_init(pio, pin+1);
+   pio_sm_set_consecutive_pindirs(pio, sm, pin, 2, true); // set pin to output
+   pio_sm_config c = blinky_program_get_default_config(offset);
+   sm_config_set_set_pins(&c, pin, 2);
+   pio_sm_init(pio, sm, offset, &c);
+}
+
+void horizontal_program_init(PIO pio, uint sm, uint offset, uint pin, uint pin_side) {
+   pio_gpio_init(pio, pin+1); // needed if pin is output
+   pio_sm_set_consecutive_pindirs(pio, sm, pin+1, 1, true); // set pin to output
+   
+   pio_gpio_init(pio, pin_side); // needed if pin is output
+   pio_sm_set_consecutive_pindirs(pio, sm, pin_side, 1, true); // set pin to output
+   
+   pio_sm_config c = horizontal_program_get_default_config(offset);
+   sm_config_set_sideset_pins(&c, pin_side);
+   sm_config_set_set_pins(&c, pin, 2);
+   pio_sm_init(pio, sm, offset, &c);
+}
+
+void trigger_pio_interrupt_init(PIO pio, uint sm, uint offset) {
+   pio_sm_config c = blinky_program_get_default_config(offset);
+   pio_sm_init(pio, sm, offset, &c);
+}
+
+%}
