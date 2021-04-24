@@ -10,9 +10,9 @@
 #define DMA_CHANNEL 0
 #define DMA_CHANNEL_H 1
 
-void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq);
+void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
 void horizontal_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
-void trigger_pio_interrupt(PIO pio, uint sm, uint offset);
+void hsync_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
 void dma_handler();
 void dma_handler_h();
 
@@ -26,7 +26,7 @@ int main() {
 
     PIO pio = pio0;
     uint offset = pio_add_program(pio, &blinky_program);
-    uint offset2 = pio_add_program(pio, &interrupt_program);
+    uint offset2 = pio_add_program(pio, &hsync_program);
     
     uint offset4 = pio_add_program(pio1, &horizontal_program);
     // printf("Loaded program at %d\n", offset);
@@ -38,12 +38,11 @@ int main() {
 
 
 
-    blink_pin_forever(pio, 0, offset, 0, 100000000);
+    blink_pin_forever(pio, 0, offset, 0, 100000000, 4);
+    hsync_forever(pio, 1, offset2, 4, 100000000, 3);
+
     horizontal_forever(pio1, 0, offset4, 1, 100000000, 3);
     
-    // blink_pin_forever(pio1, 0, offset, 1, 100000000);
-    // clock_pin_forever(pio, 0, offset3, 0, 100000000);
-
     
     
     dma_channel_config channel_config = dma_channel_get_default_config(DMA_CHANNEL);
@@ -109,8 +108,8 @@ void dma_handler_h() {
     dma_channel_set_read_addr(DMA_CHANNEL_H, &src_h[0], true);
 }
 
-void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq) {
-    blink_program_init(pio, sm, offset, pin);
+void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side) {
+    blink_program_init(pio, sm, offset, pin, pin_side);
     pio_sm_set_enabled(pio, sm, true);
 
     // printf("Blinking pin %d at %d Hz\n", pin, freq);
@@ -122,9 +121,8 @@ void horizontal_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint
     pio_sm_set_enabled(pio, sm, true);
 }
 
-void trigger_pio_interrupt(PIO pio, uint sm, uint offset) {
-    trigger_pio_interrupt_init(pio, sm, offset);
+void hsync_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side) {
+    hsync_program_init(pio, sm, offset, pin, pin_side);
     pio_sm_set_enabled(pio, sm, true);
-    sleep_ms(10);
-    pio_sm_set_enabled(pio, sm, false);
+    pio->txf[sm] = 3277;
 }
