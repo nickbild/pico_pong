@@ -10,6 +10,65 @@
 ;
 .program blinky    
 .wrap_target    
+    
+; Visible Area
+    pull block
+    mov isr, osr        ; store this persistently
+    out x, 32           ; 3,999 - 3 setup clocks
+    
+    pull block
+    out y, 32           ; 479
+
+VisibleArea2:    
+    set pins, 2          ; trigger horizontal line
+    set pins, 0          ; horizontal line trigger off    
+    mov x, isr           ; reset x
+VisibleArea1:
+    jmp x-- VisibleArea1
+    jmp y-- VisibleArea2
+
+; front porch
+
+    pull block
+    out x, 32           ; 39,999 - 2 setup clocks
+
+frontPorch1:
+    jmp x-- frontPorch1
+
+; vsync
+    pull block
+    out x, 32           ; vsync clocks: 7,999 - 3 setup clocks
+    set pins, 1         ; turn on vsync
+
+vSync:                  ; v sync pulse period
+    jmp x-- vSync
+
+    set pins, 0          ; turn off vsync
+
+; back porch
+
+    pull block
+    out x, 32           ; 131,999 - 1 setup clock
+
+backPorch1:
+    jmp x-- backPorch1
+
+.wrap
+
+
+
+
+
+
+
+
+
+
+
+
+
+.program blinkyHIDE
+.wrap_target    
     pull block           ; visible: 1,919,999 - 3 setup clocks
     out y, 32
     set pins, 2          ; start horizontal line    
@@ -39,12 +98,12 @@ frontPorchDelay1:
 ; vsync setup
     pull block           ; vsync clocks: 7,999 - 3 setup clocks
     out x, 32
-    set pins, 1         ; turn on vsync
+    set pins, 3         ; turn on vsync
 
 vSync:                  ; v sync pulse period
     jmp x-- vSync
 
-    set pins, 0          ; turn off vsync
+    set pins, 2          ; turn off vsync
 
 ; back porch delay (132,000 clocks)
 ; 32*32 (loops) + 32 (reset x) = 1056
@@ -104,6 +163,71 @@ backLoop3:
     out x, 32
 
 visible:
+    ; pull block
+    ; out pins, 32 [2]
+    set pins, 2 [3]         ; pixel values
+    jmp x-- visible
+
+    set pins, 0             ; pixel off
+
+    ; front porch (16)
+    set x, 15
+frontPorch:
+    nop [3]
+    jmp x-- frontPorch
+ 
+    ; horizontal sync (96)
+    set x, 30 side 1 [4] ; turn on h sync
+hSync1:
+    nop [3]
+    jmp x-- hSync1
+
+    set x, 30 [4]
+hSync2:
+    nop [3]
+    jmp x-- hSync2
+
+    set x, 30 [4]
+hSync3:
+    nop [3]
+    jmp x-- hSync3
+
+    nop side 0 [4] ; turn off h sync
+
+.wrap
+
+
+
+
+
+
+
+
+
+
+
+
+; Visible area	640
+; Front porch	16
+; Sync pulse	96
+; Back porch	48
+;
+; GPIO 1 = wait for horizontal draw start
+; GPIO 2 = pixel value
+; GPIO 3 = hsync
+
+.program horizontalHIDE
+.side_set 1 opt
+.wrap_target
+    wait 1 pin 1
+
+    ; visible (640)
+    pull block
+    out x, 32
+
+visible:
+    ; pull block
+    ; out pins, 32 [2]
     set pins, 2 [3]         ; pixel values
     jmp x-- visible
 
@@ -143,11 +267,6 @@ backPorch2:
     jmp x-- backPorch2
 
 .wrap
-
-
-
-;    pull block
-;    out pins, 32
 
 
 
