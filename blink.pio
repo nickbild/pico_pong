@@ -52,7 +52,9 @@ vSync:                  ; v sync pulse period
     out x, 32           ; 131,999 - 1 setup clock
 
 backPorch1:
-    jmp x-- backPorch1 side 0
+    jmp x-- backPorch1 
+    
+    nop side 0
 
 .wrap
 
@@ -88,24 +90,20 @@ visible:
     ; front porch (16)
     set x, 15
 frontPorch:
-    nop [3]
-    jmp x-- frontPorch
+    jmp x-- frontPorch [4]
  
     ; horizontal sync (96)
     set x, 30 side 1 [4] ; turn on h sync
 hSync1:
-    nop [3]
-    jmp x-- hSync1
+    jmp x-- hSync1 [4]
 
     set x, 30 [4]
 hSync2:
-    nop [3]
-    jmp x-- hSync2
+    jmp x-- hSync2 [4]
 
     set x, 30 [4]
 hSync3:
-    nop [3]
-    jmp x-- hSync3
+    jmp x-- hSync3 [4]
 
     nop side 0 [4] ; turn off h sync
 
@@ -127,17 +125,15 @@ hSync3:
 ; Sync pulse	96
 ; Back porch	48
 ;
-; GPIO 3 = hsync
 ; GPIO 4 = wait for hsync start
+; GPIO 5 = hsync
 ;
 .program hsync
 .side_set 1 opt
     pull block
 .wrap_target
     wait 1 gpio 4
-
-    ;out x, 32           ; 3,279 - 2 setup clocks
-    mov x, osr
+    mov x, osr          ; 3,279 - 2 setup clocks
 
 ; Visible + front porch delay
 topDelay:
@@ -154,8 +150,7 @@ sync1:
 ; Back porch
     set x, 29 side 0    ; hsync off
 backPorch:
-    nop [6]
-    jmp x-- backPorch
+    jmp x-- backPorch [7]
 
 .wrap
 

@@ -26,7 +26,7 @@ int main() {
 
     PIO pio = pio0;
     uint offset = pio_add_program(pio, &blinky_program);
-    uint offset2 = pio_add_program(pio, &hsync_program);
+    uint offset2 = pio_add_program(pio1, &hsync_program);
     
     uint offset4 = pio_add_program(pio1, &horizontal_program);
     // printf("Loaded program at %d\n", offset);
@@ -39,7 +39,7 @@ int main() {
 
 
     blink_pin_forever(pio, 0, offset, 0, 100000000, 4);
-    hsync_forever(pio, 1, offset2, 4, 100000000, 3);
+    hsync_forever(pio1, 1, offset2, 4, 100000000, 3);
 
     horizontal_forever(pio1, 0, offset4, 1, 100000000, 3);
     
