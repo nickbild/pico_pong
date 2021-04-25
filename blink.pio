@@ -28,13 +28,13 @@ VisibleArea1:
     jmp x-- VisibleArea1
     jmp y-- VisibleArea2
 
-; front porch
+; back porch
 
     pull block side 1
-    out x, 32           ; 39,999 - 2 setup clocks
+    out x, 32           ; 131,999 - 1 setup clock
 
-frontPorch1:
-    jmp x-- frontPorch1
+backPorch1:
+    jmp x-- backPorch1 
 
 ; vsync
     pull block
@@ -46,13 +46,13 @@ vSync:                  ; v sync pulse period
 
     set pins, 0          ; turn off vsync
 
-; back porch
+; front porch
 
-    pull block
-    out x, 32           ; 131,999 - 1 setup clock
+    pull block 
+    out x, 32           ; 39,999 - 2 setup clocks
 
-backPorch1:
-    jmp x-- backPorch1 
+frontPorch1:
+    jmp x-- frontPorch1
     
     nop side 0 [7]
 
