@@ -13,12 +13,12 @@
 .wrap_target    
     
 ; Visible Area
-    pull block
-    mov isr, osr        ; store this persistently
-    out x, 32           ; 3,999 - 3 setup clocks
+    pull block [7]
+    mov isr, osr [7]    ; store this persistently
+    out x, 32 [7]       ; 3,999 - 3 setup clocks
     
-    pull block
-    out y, 32           ; 479
+    pull block [7]
+    out y, 32 [7]       ; 479
 
 VisibleArea2:    
     set pins, 2          ; trigger horizontal line
@@ -54,7 +54,7 @@ vSync:                  ; v sync pulse period
 backPorch1:
     jmp x-- backPorch1 
     
-    nop side 0
+    nop side 0 [7]
 
 .wrap
 
