@@ -1,3 +1,5 @@
+set(PICO_DEFAULT_BINARY_TYPE copy_to_ram)
+
 add_executable(pico_vga)
 
 pico_generate_pio_header(pico_vga ${CMAKE_CURRENT_LIST_DIR}/blink.pio)

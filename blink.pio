@@ -72,20 +72,27 @@ frontPorch1:
 
 .program horizontal
 .side_set 1 opt
+pull block
+mov isr, osr
 .wrap_target
     wait 1 pin 1
 
     ; visible (640)
-    pull block
-    out x, 32
+    mov y, isr
+    ;out y, 32
 
+    set x, 0
+    pull noblock              ; Uses x if data not ready.
 visible:
-    ; pull block
-    ; out pins, 32 [2]
-    set pins, 2 [3]         ; pixel values
-    jmp x-- visible
+    out pins, 32 
+    pull noblock [2]          ; Uses x if data not ready.
+    ; set pins, 2 [3]         ; pixel values
+    jmp y-- visible
 
-    set pins, 0             ; pixel off
+    pull noblock              ; ignore 640
+
+    mov osr, x                ; pixel off
+    out pins, 32
 
     ; front porch (16)
     set x, 15
@@ -125,8 +132,8 @@ hSync3:
 ; Sync pulse	96
 ; Back porch	48
 ;
+; GPIO 3 = hsync
 ; GPIO 4 = wait for hsync start
-; GPIO 5 = hsync
 ;
 .program hsync
 .side_set 1 opt
@@ -181,7 +188,8 @@ void horizontal_program_init(PIO pio, uint sm, uint offset, uint pin, uint pin_s
    
    pio_sm_config c = horizontal_program_get_default_config(offset);
    sm_config_set_sideset_pins(&c, pin_side);
-   sm_config_set_set_pins(&c, pin, 2);
+   sm_config_set_set_pins(&c, pin, 1);
+   sm_config_set_out_pins(&c, pin+1, 1);
    pio_sm_init(pio, sm, offset, &c);
 }
 
