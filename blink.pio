@@ -80,15 +80,19 @@ mov isr, osr
     ; visible (640)
     mov y, isr
 
-    set x, 1
 visible:
     pull noblock              ; Uses x if data not ready.
-    out pins, 32 [2]
+    mov x, osr
+    jmp !x setZero
+    set pins, 2
     jmp y-- visible
+    jmp visibleDone
+setZero:
+    set pins, 0
+    jmp y-- visible
+visibleDone:
 
-    set x, 0
-    mov osr, x                ; pixel off
-    out pins, 32
+    set pins, 0
 
     ; front porch (16)
     set x, 15
@@ -184,8 +188,7 @@ void horizontal_program_init(PIO pio, uint sm, uint offset, uint pin, uint pin_s
    
    pio_sm_config c = horizontal_program_get_default_config(offset);
    sm_config_set_sideset_pins(&c, pin_side);
-   sm_config_set_set_pins(&c, pin, 1);
-   sm_config_set_out_pins(&c, pin+1, 1);
+   sm_config_set_set_pins(&c, pin, 2); 
    pio_sm_init(pio, sm, offset, &c);
 }
 
