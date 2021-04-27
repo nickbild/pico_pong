@@ -72,25 +72,21 @@ frontPorch1:
 
 .program horizontal
 .side_set 1 opt
-pull block
+pull block                    ; 639
 mov isr, osr
 .wrap_target
     wait 1 pin 1
 
     ; visible (640)
     mov y, isr
-    ;out y, 32
 
-    set x, 0
-    pull noblock              ; Uses x if data not ready.
+    set x, 1
 visible:
-    out pins, 32 
-    pull noblock [2]          ; Uses x if data not ready.
-    ; set pins, 2 [3]         ; pixel values
+    pull noblock              ; Uses x if data not ready.
+    out pins, 32 [2]
     jmp y-- visible
 
-    pull noblock              ; ignore 640
-
+    set x, 0
     mov osr, x                ; pixel off
     out pins, 32
 
