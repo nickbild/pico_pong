@@ -85,34 +85,31 @@ visible:
     mov x, osr
     jmp !x setZero
     set pins, 2
-    jmp y-- visible
+    jmp y-- visible [5]
     jmp visibleDone
 setZero:
     set pins, 0
-    jmp y-- visible
+    jmp y-- visible [5]
 visibleDone:
 
     set pins, 0
 
     ; front porch (16)
-    set x, 15
+    set x, 29
 frontPorch:
     jmp x-- frontPorch [4]
  
     ; horizontal sync (96)
-    set x, 30 side 1 [4] ; turn on h sync
+    ; 1536
+    set y, 27 side 1 ; turn on h sync
+  
+hSync2:  
+    set x, 31
 hSync1:
-    jmp x-- hSync1 [4]
-
-    set x, 30 [4]
-hSync2:
-    jmp x-- hSync2 [4]
-
-    set x, 30 [4]
-hSync3:
-    jmp x-- hSync3 [4]
-
-    nop side 0 [4] ; turn off h sync
+    jmp x-- hSync1
+    jmp y-- hSync2
+    
+    nop side 0 ; turn off h sync
 
 .wrap
 
@@ -147,11 +144,11 @@ topDelay:
     jmp x-- topDelay
 
 ; hsync (96)
-    set y, 2 side 1     ; hsync on
+    set y, 27 side 1     ; hsync on
 sync2:
-    set x, 30 [3]
+    set x, 31
 sync1:
-    jmp x-- sync1 [4]
+    jmp x-- sync1
     jmp y-- sync2
 
 ; Back porch
