@@ -19,10 +19,8 @@ void dma_handler_h();
 int main() {
     stdio_init_all();
 
-    // set_sys_clock_khz(40000, true);
     // 400-1600 MHz, 1-7, 1-7
-    // set_sys_clock_pll(1440000000, 6, 6); // 40 MHz
-    set_sys_clock_pll(1500000000, 6, 1); // 125 MHz, 8 ns/clock, 5 clocks/pixel
+    set_sys_clock_pll(1500000000, 6, 1); // 250 MHz, 4 ns/clock, 10 clocks/pixel
 
     PIO pio = pio0;
     uint offset = pio_add_program(pio, &blinky_program);
