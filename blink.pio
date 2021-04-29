@@ -10,15 +10,13 @@
 ;
 .program blinky    
 .side_set 1 opt
+    pull block
+    mov isr, osr    ; store this persistently, 7,999 - 3 setup clocks
 .wrap_target    
     
 ; Visible Area
-    pull block [7]
-    mov isr, osr [7]    ; store this persistently
-    out x, 32 [7]       ; 3,999 - 3 setup clocks
-    
-    pull block [7]
-    out y, 32 [7]       ; 479
+    pull block
+    out y, 32           ; 479
 
 VisibleArea2:    
     set pins, 2          ; trigger horizontal line
@@ -95,7 +93,7 @@ visibleDone:
     set pins, 0
 
     ; front porch (16)
-    set x, 29
+    set x, 29 [7]
 frontPorch:
     jmp x-- frontPorch [4]
  
