@@ -20,7 +20,7 @@
 
 VisibleArea2:    
     set pins, 2          ; trigger horizontal line
-    set pins, 0          ; horizontal line trigger off    
+    set pins, 1          ; horizontal line trigger off    
     mov x, isr           ; reset x
 VisibleArea1:
     jmp x-- VisibleArea1
@@ -37,12 +37,12 @@ backPorch1:
 ; vsync
     pull block
     out x, 32           ; vsync clocks: 7,999 - 3 setup clocks
-    set pins, 1         ; turn on vsync
+    set pins, 0         ; turn on vsync
 
 vSync:                  ; v sync pulse period
     jmp x-- vSync
 
-    set pins, 0          ; turn off vsync
+    set pins, 1          ; turn off vsync
 
 ; front porch
 
@@ -99,7 +99,7 @@ frontPorch:
  
     ; horizontal sync (96)
     ; 1536
-    set y, 27 side 1 ; turn on h sync
+    set y, 27 side 0 ; turn on h sync
   
 hSync2:  
     set x, 31
@@ -107,7 +107,7 @@ hSync1:
     jmp x-- hSync1
     jmp y-- hSync2
     
-    nop side 0 ; turn off h sync
+    nop side 1 ; turn off h sync
 
 .wrap
 
@@ -142,7 +142,7 @@ topDelay:
     jmp x-- topDelay
 
 ; hsync (96)
-    set y, 27 side 1     ; hsync on
+    set y, 27 side 0     ; hsync on
 sync2:
     set x, 31
 sync1:
@@ -150,7 +150,7 @@ sync1:
     jmp y-- sync2
 
 ; Back porch
-    set x, 29 side 0    ; hsync off
+    set x, 29 side 1    ; hsync off
 backPorch:
     jmp x-- backPorch [7]
 
