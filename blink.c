@@ -13,6 +13,7 @@
 void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
 void horizontal_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
 void hsync_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
+void hsync_forever_initial(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
 void dma_handler();
 void dma_handler_h();
 
@@ -38,6 +39,7 @@ int main() {
 
     blink_pin_forever(pio, 0, offset, 0, 100000000, 4);
     hsync_forever(pio1, 1, offset2, 4, 100000000, 3);
+    hsync_forever_initial(pio1, 2, offset2, 5, 100000000, 3); // Initial
 
     horizontal_forever(pio1, 0, offset4, 1, 100000000, 3);
     
@@ -52,7 +54,7 @@ int main() {
                           &channel_config,
                           &pio->txf[sm],
                           NULL,
-                          4,
+                          5,
                           false);
     
     dma_channel_set_irq0_enabled(DMA_CHANNEL, true);
@@ -93,7 +95,8 @@ int main() {
 }
 
 void dma_handler() {
-    static uint32_t src[] = {479, 261996, 15992, 65992};
+    //static uint32_t src[] = {479, 261996, 15992, 65992};
+    static uint32_t src[] = {479, 7750, 253996, 15992, 66279};
     dma_hw->ints0 = 1u << DMA_CHANNEL;
     dma_channel_set_read_addr(DMA_CHANNEL, &src[0], true);
 }
@@ -128,4 +131,10 @@ void hsync_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_
     hsync_program_init(pio, sm, offset, pin, pin_side);
     pio_sm_set_enabled(pio, sm, true);
     pio->txf[sm] = 6804;
+}
+
+void hsync_forever_initial(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side) {
+    hsync_program_init(pio, sm, offset, pin, pin_side);
+    pio_sm_set_enabled(pio, sm, true);
+    pio->txf[sm] = 6554;
 }
