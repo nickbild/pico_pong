@@ -96,7 +96,7 @@ int main() {
 
 void dma_handler() {
     //static uint32_t src[] = {479, 7750, 253996, 15992, 66279};
-    static uint32_t src[] = {479, 7750, 256244, 15999, 79981};
+    static uint32_t src[] = {479, 7750, 256253, 15999, 79981};
     dma_hw->ints0 = 1u << DMA_CHANNEL;
     dma_channel_set_read_addr(DMA_CHANNEL, &src[0], true);
 }
