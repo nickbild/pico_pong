@@ -96,7 +96,7 @@ setZero:
     jmp y-- visible [5]
 visibleDone:
 
-    set pins, 0
+    set pins, 0 [3]
 
     ; front porch (16)
     set x, 29 [7]
@@ -105,7 +105,7 @@ frontPorch:
  
     ; horizontal sync (96)
     ; 1536
-    set y, 27 side 0 ; turn on h sync
+    set y, 27 side 0 [7] ; turn on h sync
   
 hSync2:  
     set x, 31
@@ -136,19 +136,21 @@ hSync1:
 ; GPIO 3 = hsync
 ; GPIO 4 = wait for hsync start
 ;
+; static uint32_t src[] = {479, 7750, 70090, 15992, 262145};
+;
 .program hsync
 .side_set 1 opt
     pull block
 .wrap_target
     wait 1 pin 0
-    mov x, osr          ; 3,279 - 2 setup clocks
+    mov x, osr [3]        ; 3,279 - 2 setup clocks
 
 ; Visible + front porch delay
 topDelay:
     jmp x-- topDelay
 
 ; hsync (96)
-    set y, 27 side 0     ; hsync on
+    set y, 27 side 0 [7] ; hsync on
 sync2:
     set x, 31
 sync1:
@@ -156,7 +158,7 @@ sync1:
     jmp y-- sync2
 
 ; Back porch
-    set x, 29 side 1    ; hsync off
+    set x, 27 side 1     ; hsync off
 backPorch:
     jmp x-- backPorch [7]
 
