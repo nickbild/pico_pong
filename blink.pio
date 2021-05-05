@@ -89,7 +89,7 @@ mov isr, osr
     mov y, isr
 
 visible:
-    pull noblock              ; Uses x if data not ready.
+    pull noblock
     mov x, osr
     jmp !x setZero
     set pins, 2
