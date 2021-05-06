@@ -16,12 +16,21 @@ void hsync_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_
 void hsync_forever_initial(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
 void dma_handler();
 void dma_handler_h();
-void draw_computer_paddle(int y);
+void draw_computer_paddle(int y, int color);
 void draw_player_paddle(int y);
 void draw_net();
-void draw_ball(int x_start, int y_start);
+void draw_ball(int x_start, int y_start, int color);
+void adjust_computer_paddle();
 
 uint8_t src_h[224000] = {};
+
+int vx = 1;
+int vy = 1;
+int ball_x = 50;
+int ball_y = 150;
+
+int computer_paddle_y = 30;
+
 
 int main() {
     stdio_init_all();
@@ -105,22 +114,62 @@ int main() {
     dma_handler_h();
 
 
-    draw_computer_paddle(30);
+    draw_computer_paddle(computer_paddle_y, 1);
     draw_player_paddle(30);
     draw_net();
-    draw_ball(50, 100);
+    sleep_ms(25000);
 
     while(true) {
-        sleep_ms(1000);
+        // Move ball.
+        draw_ball(ball_x, ball_y, 0);
+        ball_x = ball_x + vx;
+        ball_y = ball_y + vy;
+        draw_ball(ball_x, ball_y, 1);
+
+        // Check for left/right collision.
+        if (ball_x < 0 || ball_x > 639) {
+            vx = vx * -1;
+        }
+        
+        // Check for top/bottom collision.
+        if (ball_y < 5 || ball_y > 337) {
+            vy = vy * -1;
+        }
+
+        draw_net();
+        adjust_computer_paddle();
+        draw_player_paddle(30);
+
+        sleep_ms(5);
     }
 }
 
-void draw_computer_paddle(int y_start) {
+void draw_computer_paddle(int y_start, int color) {
     for (int x=10; x<15; x++) {
             for (int y=y_start+40; y>y_start; y--) {
-                src_h[y*640+x] = 1;
+                src_h[y*640+x] = color;
             }
         }
+}
+
+void adjust_computer_paddle() {
+    draw_computer_paddle(computer_paddle_y, 0);
+
+    if (ball_y > computer_paddle_y+20) {
+        computer_paddle_y++;
+    } else if (ball_y < computer_paddle_y+20) {
+        computer_paddle_y--;
+    }
+
+    if (computer_paddle_y < 4) {
+        computer_paddle_y = 4;
+    }
+
+    if (computer_paddle_y > 304) {
+        computer_paddle_y = 304;
+    }
+
+    draw_computer_paddle(computer_paddle_y, 1);
 }
 
 void draw_player_paddle(int y_start) {
@@ -131,10 +180,10 @@ void draw_player_paddle(int y_start) {
         }
 }
 
-void draw_ball(int x_start, int y_start) {
+void draw_ball(int x_start, int y_start, int color) {
     for (int x=x_start+5; x>x_start; x--) {
             for (int y=y_start+5; y>y_start; y--) {
-                src_h[y*640+x] = 1;
+                src_h[y*640+x] = color;
             }
         }
 }
