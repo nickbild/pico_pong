@@ -17,20 +17,20 @@ void hsync_forever_initial(PIO pio, uint sm, uint offset, uint pin, uint freq, u
 void dma_handler();
 void dma_handler_h();
 
-uint8_t src_h[153600] = {};
+uint8_t src_h[224000] = {};
 
 int main() {
     stdio_init_all();
 
-    for (int i=0; i<153600; i++) {
+    for (int i=0; i<224000; i++) {
         src_h[i] = 0;
     }
 
-    for (int i=0; i<153600; i=i+640) {
+    for (int i=0; i<224000; i=i+640) {
         src_h[i] = 1;
     }
 
-    for (int i=639; i<153600; i=i+640) {
+    for (int i=639; i<224000; i=i+640) {
         src_h[i] = 1;
     }
 
@@ -38,11 +38,11 @@ int main() {
         src_h[i] = 1;
     }
 
-    for (int i=152959; i<153600; i++) {
+    for (int i=222719; i<223360; i++) {
         src_h[i] = 1;
     }
 
-    src_h[3000] = 1;
+    
 
     // 400-1600 MHz, 1-7, 1-7
     set_sys_clock_pll(1550000000, 6, 1); // 250 MHz, 4 ns/clock, 10 clocks/pixel
@@ -99,7 +99,7 @@ int main() {
                           &channel_config_h,
                           &pio1->txf[sm],
                           NULL,
-                          153600,
+                          224000,
                           false);
     
     dma_channel_set_irq1_enabled(DMA_CHANNEL_H, true);
@@ -112,18 +112,19 @@ int main() {
     // pio->irq = 1u << sm;
 
     while(true) {
-        printf("test\n");
-        printf("%d\n", clock_get_hz(clk_sys) / 2 * 5);
-        sleep_ms(1000);
+        for (int i=3000; i<4000; i++) {
+            src_h[i-1] = 0;
+            src_h[i] = 1;
+            sleep_ms(5);
+        }
     }
 }
 
 void dma_handler() {
-    //static uint32_t src[] = {479, 7750, 253996, 15992, 66279};
-    static uint32_t src[] = {479, 7750, 256253, 15999, 79981};
+    static uint32_t src[] = {349, 7750, 1295473, 15999, 80750};
     dma_hw->ints0 = 1u << DMA_CHANNEL;
     dma_channel_set_read_addr(DMA_CHANNEL, &src[0], true);
-}
+} // 1039220
 
 void dma_handler_h() {
     // Not showing: 10 on left, 10 on right.

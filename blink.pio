@@ -30,7 +30,6 @@ VisibleArea1:
 
     nop [3]
     nop [3]
-    nop
 
     pull block side 2   ; turn on INITIAL hsync only
     out x, 32           ; 131,999 - 1 setup clock
