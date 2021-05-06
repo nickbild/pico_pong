@@ -16,33 +16,30 @@ void hsync_forever(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_
 void hsync_forever_initial(PIO pio, uint sm, uint offset, uint pin, uint freq, uint pin_side);
 void dma_handler();
 void dma_handler_h();
+void draw_computer_paddle(int y);
+void draw_player_paddle(int y);
+void draw_net();
+void draw_ball(int x_start, int y_start);
 
 uint8_t src_h[224000] = {};
 
 int main() {
     stdio_init_all();
 
+    // Black out all pixels
     for (int i=0; i<224000; i++) {
         src_h[i] = 0;
     }
 
-    for (int i=0; i<224000; i=i+640) {
+    // Top border (4 lines)
+    for (int i=0; i<2560; i++) {
         src_h[i] = 1;
     }
 
-    for (int i=639; i<224000; i=i+640) {
+    // Bottom border (4 lines)
+    for (int i=220800; i<223360; i++) {
         src_h[i] = 1;
     }
-
-    for (int i=0; i<640; i++) {
-        src_h[i] = 1;
-    }
-
-    for (int i=222719; i<223360; i++) {
-        src_h[i] = 1;
-    }
-
-    
 
     // 400-1600 MHz, 1-7, 1-7
     set_sys_clock_pll(1550000000, 6, 1); // 250 MHz, 4 ns/clock, 10 clocks/pixel
@@ -108,14 +105,59 @@ int main() {
     dma_handler_h();
 
 
-    // trigger_pio_interrupt(pio, 3, offset2);
-    // pio->irq = 1u << sm;
+    draw_computer_paddle(30);
+    draw_player_paddle(30);
+    draw_net();
+    draw_ball(50, 100);
 
     while(true) {
-        for (int i=3000; i<4000; i++) {
-            src_h[i-1] = 0;
-            src_h[i] = 1;
-            sleep_ms(5);
+        sleep_ms(1000);
+    }
+}
+
+void draw_computer_paddle(int y_start) {
+    for (int x=10; x<15; x++) {
+            for (int y=y_start+40; y>y_start; y--) {
+                src_h[y*640+x] = 1;
+            }
+        }
+}
+
+void draw_player_paddle(int y_start) {
+    for (int x=624; x<629; x++) {
+            for (int y=y_start+40; y>y_start; y--) {
+                src_h[y*640+x] = 1;
+            }
+        }
+}
+
+void draw_ball(int x_start, int y_start) {
+    for (int x=x_start+5; x>x_start; x--) {
+            for (int y=y_start+5; y>y_start; y--) {
+                src_h[y*640+x] = 1;
+            }
+        }
+}
+
+void draw_net() {
+    uint8_t counter = 0;
+
+    for (int y=4; y<346; y++) {
+        counter++;
+
+        for (int x=312; x<315; x++) {
+
+            // Draw alternating segments of white and black.
+            if (counter <= 10) {
+                src_h[y*640+x] = 1;
+            } else {
+                src_h[y*640+x] = 0;
+            }
+        }
+
+        // Reset net gap counter.
+        if (counter == 20) {
+            counter = 0;
         }
     }
 }
