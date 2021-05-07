@@ -134,7 +134,7 @@ int main() {
         draw_ball(ball_x, ball_y, 1);
 
         // Check for left/right collision.
-        if (ball_x < 0 || ball_x > 639) {
+        if (ball_x < 15 || ball_x > 617) {
             vx = vx * -1;
         }
         
