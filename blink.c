@@ -17,7 +17,7 @@ void hsync_forever_initial(PIO pio, uint sm, uint offset, uint pin, uint freq, u
 void dma_handler();
 void dma_handler_h();
 void draw_computer_paddle(int y, int color);
-void draw_player_paddle(int y);
+void draw_player_paddle(int y, int color);
 void draw_net();
 void draw_ball(int x_start, int y_start, int color);
 void adjust_computer_paddle();
@@ -30,10 +30,17 @@ int ball_x = 50;
 int ball_y = 150;
 
 int computer_paddle_y = 30;
-
+int player_paddle_y = 30;
+const uint8_t PLAYER_UP_DOWN = 14;
+const uint8_t PLAYER_UP_PIN = 15;
 
 int main() {
     stdio_init_all();
+
+    gpio_init(PLAYER_UP_PIN);
+    gpio_set_dir(PLAYER_UP_PIN, GPIO_IN);
+    gpio_init(PLAYER_UP_DOWN);
+    gpio_set_dir(PLAYER_UP_DOWN, GPIO_IN);
 
     // Black out all pixels
     for (int i=0; i<224000; i++) {
@@ -115,7 +122,7 @@ int main() {
 
 
     draw_computer_paddle(computer_paddle_y, 1);
-    draw_player_paddle(30);
+    draw_player_paddle(player_paddle_y, 1);
     draw_net();
     sleep_ms(25000);
 
@@ -138,7 +145,17 @@ int main() {
 
         draw_net();
         adjust_computer_paddle();
-        draw_player_paddle(30);
+
+        if (gpio_get(PLAYER_UP_PIN) == 0) {
+            draw_player_paddle(player_paddle_y, 0);
+            player_paddle_y--;
+            draw_player_paddle(player_paddle_y, 1);
+        }
+        if (gpio_get(PLAYER_UP_DOWN) == 0) {
+            draw_player_paddle(player_paddle_y, 0);
+            player_paddle_y++;
+            draw_player_paddle(player_paddle_y, 1);
+        }
 
         sleep_ms(5);
     }
@@ -146,6 +163,14 @@ int main() {
 
 void draw_computer_paddle(int y_start, int color) {
     for (int x=10; x<15; x++) {
+            for (int y=y_start+40; y>y_start; y--) {
+                src_h[y*640+x] = color;
+            }
+        }
+}
+
+void draw_player_paddle(int y_start, int color) {
+    for (int x=624; x<629; x++) {
             for (int y=y_start+40; y>y_start; y--) {
                 src_h[y*640+x] = color;
             }
@@ -170,14 +195,6 @@ void adjust_computer_paddle() {
     }
 
     draw_computer_paddle(computer_paddle_y, 1);
-}
-
-void draw_player_paddle(int y_start) {
-    for (int x=624; x<629; x++) {
-            for (int y=y_start+40; y>y_start; y--) {
-                src_h[y*640+x] = 1;
-            }
-        }
 }
 
 void draw_ball(int x_start, int y_start, int color) {
