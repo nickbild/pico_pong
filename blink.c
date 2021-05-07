@@ -17,7 +17,7 @@ void hsync_forever_initial(PIO pio, uint sm, uint offset, uint pin, uint freq, u
 void dma_handler();
 void dma_handler_h();
 void draw_computer_paddle(int y, int color);
-void draw_player_paddle(int y, int color);
+void draw_player_paddle(int color);
 void draw_net();
 void draw_ball(int x_start, int y_start, int color);
 void adjust_computer_paddle();
@@ -123,7 +123,7 @@ int main() {
 
 
     draw_computer_paddle(computer_paddle_y, 1);
-    draw_player_paddle(player_paddle_y, 1);
+    draw_player_paddle(1);
     draw_net();
     sleep_ms(25000);
 
@@ -167,14 +167,14 @@ int main() {
         adjust_computer_paddle();
 
         if (gpio_get(PLAYER_UP_PIN) == 0) {
-            draw_player_paddle(player_paddle_y, 0);
+            draw_player_paddle(0);
             player_paddle_y--;
-            draw_player_paddle(player_paddle_y, 1);
+            draw_player_paddle(1);
         }
         if (gpio_get(PLAYER_UP_DOWN) == 0) {
-            draw_player_paddle(player_paddle_y, 0);
+            draw_player_paddle(0);
             player_paddle_y++;
-            draw_player_paddle(player_paddle_y, 1);
+            draw_player_paddle(1);
         }
 
         sleep_ms(5);
@@ -198,9 +198,17 @@ void draw_computer_paddle(int y_start, int color) {
         }
 }
 
-void draw_player_paddle(int y_start, int color) {
+void draw_player_paddle(int color) {
+    if (player_paddle_y < 4) {
+        player_paddle_y = 4;
+    }
+
+    if (player_paddle_y > 304) {
+        player_paddle_y = 304;
+    }
+
     for (int x=624; x<629; x++) {
-            for (int y=y_start+40; y>y_start; y--) {
+            for (int y=player_paddle_y+40; y>player_paddle_y; y--) {
                 src_h[y*640+x] = color;
             }
         }
