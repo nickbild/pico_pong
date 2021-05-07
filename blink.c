@@ -21,6 +21,7 @@ void draw_player_paddle(int y, int color);
 void draw_net();
 void draw_ball(int x_start, int y_start, int color);
 void adjust_computer_paddle();
+void point_scored();
 
 uint8_t src_h[224000] = {};
 
@@ -133,9 +134,28 @@ int main() {
         ball_y = ball_y + vy;
         draw_ball(ball_x, ball_y, 1);
 
-        // Check for left/right collision.
-        if (ball_x < 15 || ball_x > 617) {
+        // Check for left collision.
+        if (ball_x < 15) {
             vx = vx * -1;
+
+            // Check for a point.
+            if (ball_y > computer_paddle_y+40) {
+                point_scored();
+            } else if (ball_y+5 < computer_paddle_y) {
+                point_scored();
+            }
+        }
+
+        // Check for right collision.
+        if (ball_x > 617) {
+            vx = vx * -1;
+
+            // Check for a point.
+            if (ball_y > player_paddle_y+40) {
+                point_scored();
+            } else if (ball_y+5 < player_paddle_y) {
+                point_scored();
+            }
         }
         
         // Check for top/bottom collision.
@@ -158,6 +178,15 @@ int main() {
         }
 
         sleep_ms(5);
+    }
+}
+
+void point_scored() {
+    for (int i=0; i<6; i++) {
+        draw_ball(ball_x, ball_y, 0);
+        sleep_ms(250);
+        draw_ball(ball_x, ball_y, 1);
+        sleep_ms(250);
     }
 }
 
