@@ -16,7 +16,11 @@ The player paddle is controlled by two infrared (IR) LED / IR phototransistor pa
 
 ## Media
 
+Playing Pong:
 ![Pong](https://raw.githubusercontent.com/nickbild/pico_pong/main/media/20210507_190239_sm.jpg)
+
+The gesture controller:
+![Controller](https://raw.githubusercontent.com/nickbild/pico_pong/main/media/20210507_190101_sm.jpg)
 
 ## Bill of Materials
 
