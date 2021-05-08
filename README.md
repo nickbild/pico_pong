@@ -1,1 +1,3 @@
-# pico_pong
+# Pico Pong
+
+Coming soon!
