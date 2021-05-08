@@ -14,7 +14,7 @@ Data for the display is stored in a buffer in RAM, which the PIO program grabs a
 
 Fortunately the Raspberry Pi Pico is known for it's ability to be overclocked.  I had to run it at over 258 MHz to get everything working correctly—not bad for a board rated at 133 MHz.
 
-The player paddle is controlled by two infrared (IR) LED / IR phototransistor pairs.  The IR LED shines upward onto a mirror (held in place by a QuadHands), which reflects the IR light back onto the receiver.  When that signal is interrupted (i.e. by a hand), it triggers the Pico via GPIO to move the player paddle.  One receiver moves the paddle up on the screen, and the other moves the paddle down.  I was surprised by how smooth and natural an interface this ended up being to Pong; much nicer than a potentiometer in my opinion.  The paddle on the left side of the screen is computer controlled.
+The player paddle is controlled by two infrared (IR) LED / IR phototransistor pairs.  The IR LED shines upward onto a mirror (held in place by a QuadHands), which reflects the IR light back onto the receiver.  When that signal is interrupted (i.e. by a hand), it triggers the Pico via GPIO to move the player paddle.  One receiver moves the paddle up on the screen, and the other moves the paddle down.  I was surprised by how smooth and natural an interface this ended up being for Pong; much nicer than a potentiometer.  It feels a bit like playing a Wii game, if the Wii came out in the 1980s.  The paddle on the left side of the screen is computer controlled.
 
 ## Media
 
