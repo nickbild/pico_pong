@@ -22,6 +22,9 @@ Playing Pong:
 The gesture controller:
 ![Controller](https://raw.githubusercontent.com/nickbild/pico_pong/main/media/20210507_190101_sm.jpg)
 
+The Pico and VGA breakout board:
+![Pico](https://raw.githubusercontent.com/nickbild/pico_pong/main/media/20210507_190134_sm.jpg)
+
 ## Bill of Materials
 
 - 1 x Raspberry Pi Pico
