@@ -12,7 +12,7 @@ A Raspberry Pi Pico generates a 640x480@60Hz monochrome VGA signal.  Due to memo
 
 Data for the display is stored in a buffer in RAM, which the PIO program grabs at exactly the right nanosecond as it paints the screen via DMA.  This leaves the CPU free to do other work, like play a game, while the PIO handles the cycle-intensive process of generating a VGA signal.  The CPU simply needs to update the appropriate memory locations as needed to change the video output.
 
-Fortunately the Raspberry Pi Pico is known for it's ability to be overclocked.  I had to run it at over 258 MHz to get everything working correctly—not bad for a board rated at 133 MHz.
+Fortunately the Raspberry Pi Pico is known for its ability to be overclocked.  I had to run it at over 258 MHz to get everything working correctly—not bad for a board rated at 133 MHz.
 
 The player paddle is controlled by two infrared (IR) LED / IR phototransistor pairs.  The IR LED shines upward onto a mirror (held in place by a QuadHands), which reflects the IR light back onto the receiver.  When that signal is interrupted (i.e. by a hand), it triggers the Pico via GPIO to move the player paddle.  One receiver moves the paddle up on the screen, and the other moves the paddle down.  I was surprised by how smooth and natural an interface this ended up being for Pong; much nicer than a potentiometer.  It feels a bit like playing a Wii game, if the Wii came out in the 1980s.  The paddle on the left side of the screen is computer controlled.
 
