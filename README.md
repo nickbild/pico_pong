@@ -38,6 +38,7 @@ The Pico and VGA breakout board:
 - 3 x 100 ohm resistors
 - 3 x 387 ohm resistors
 - 2 x 10 ohm resistors
+- 2 x 10K ohm resistors
 - 2 x Breadboards
 - Small disc mirrors
 - Miscellaneous wire

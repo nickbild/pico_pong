@@ -1,0 +1,283 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MCU_RaspberryPi_and_Boards:Pico U?
+U 1 1 6096C8F9
+P 9250 3350
+F 0 "U?" H 9250 4565 50  0000 C CNN
+F 1 "Pico" H 9250 4474 50  0000 C CNN
+F 2 "RPi_Pico:RPi_Pico_SMD_TH" V 9250 3350 50  0001 C CNN
+F 3 "" H 9250 3350 50  0001 C CNN
+	1    9250 3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 6096F5B5
+P 7800 2700
+F 0 "R?" V 7593 2700 50  0000 C CNN
+F 1 "387 ohm" V 7684 2700 50  0000 C CNN
+F 2 "" V 7730 2700 50  0001 C CNN
+F 3 "~" H 7800 2700 50  0001 C CNN
+	1    7800 2700
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60970F11
+P 6600 2700
+F 0 "#PWR?" H 6600 2450 50  0001 C CNN
+F 1 "GND" V 6605 2572 50  0000 R CNN
+F 2 "" H 6600 2700 50  0001 C CNN
+F 3 "" H 6600 2700 50  0001 C CNN
+	1    6600 2700
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 6097041F
+P 7100 2700
+F 0 "R?" V 6893 2700 50  0000 C CNN
+F 1 "100 ohm" V 6984 2700 50  0000 C CNN
+F 2 "" V 7030 2700 50  0001 C CNN
+F 3 "~" H 7100 2700 50  0001 C CNN
+	1    7100 2700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6600 2700 6950 2700
+Wire Wire Line
+	7250 2700 7450 2700
+Wire Wire Line
+	7950 2700 8550 2700
+Text Label 7450 2300 0    50   ~ 0
+VGA-R,G,B
+Wire Wire Line
+	7450 2300 7450 2700
+Connection ~ 7450 2700
+Wire Wire Line
+	7450 2700 7650 2700
+Text Label 8300 1900 0    50   ~ 0
+VGA-Vsync
+Wire Wire Line
+	8300 1900 8300 2400
+Wire Wire Line
+	8300 2400 8550 2400
+Text Label 7950 3100 0    50   ~ 0
+VGA-Hsync
+Wire Wire Line
+	7950 3100 7950 2800
+Wire Wire Line
+	7950 2800 8550 2800
+$Comp
+L Sensor_Optical:BP103BF Q?
+U 1 1 6097C25B
+P 6650 4150
+F 0 "Q?" H 6840 4196 50  0000 L CNN
+F 1 "BP103BF" H 6840 4105 50  0000 L CNN
+F 2 "LED_THT:LED_D5.0mm_Clear" H 7130 4010 50  0001 C CNN
+F 3 "http://www.b-kainka.de/Daten/Sensor/bp103bf.pdf" H 6650 4150 50  0001 C CNN
+	1    6650 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60981D36
+P 6750 3650
+F 0 "R?" H 6820 3696 50  0000 L CNN
+F 1 "10K ohm" H 6820 3605 50  0000 L CNN
+F 2 "" V 6680 3650 50  0001 C CNN
+F 3 "~" H 6750 3650 50  0001 C CNN
+	1    6750 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6750 3800 6750 3900
+$Comp
+L power:GND #PWR?
+U 1 1 609827A3
+P 6750 3500
+F 0 "#PWR?" H 6750 3250 50  0001 C CNN
+F 1 "GND" H 6755 3327 50  0000 C CNN
+F 2 "" H 6750 3500 50  0001 C CNN
+F 3 "" H 6750 3500 50  0001 C CNN
+	1    6750 3500
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	8550 4200 7500 4200
+Wire Wire Line
+	7500 4200 7500 3900
+Wire Wire Line
+	7500 3900 6750 3900
+Connection ~ 6750 3900
+Wire Wire Line
+	6750 3900 6750 3950
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6098414E
+P 6750 4350
+F 0 "#PWR?" H 6750 4200 50  0001 C CNN
+F 1 "+3.3V" H 6765 4523 50  0000 C CNN
+F 2 "" H 6750 4350 50  0001 C CNN
+F 3 "" H 6750 4350 50  0001 C CNN
+	1    6750 4350
+	-1   0    0    1   
+$EndComp
+$Comp
+L Sensor_Optical:BP103BF Q?
+U 1 1 60987E7C
+P 6650 5550
+F 0 "Q?" H 6840 5596 50  0000 L CNN
+F 1 "BP103BF" H 6840 5505 50  0000 L CNN
+F 2 "LED_THT:LED_D5.0mm_Clear" H 7130 5410 50  0001 C CNN
+F 3 "http://www.b-kainka.de/Daten/Sensor/bp103bf.pdf" H 6650 5550 50  0001 C CNN
+	1    6650 5550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60987E82
+P 6750 5050
+F 0 "R?" H 6820 5096 50  0000 L CNN
+F 1 "10K ohm" H 6820 5005 50  0000 L CNN
+F 2 "" V 6680 5050 50  0001 C CNN
+F 3 "~" H 6750 5050 50  0001 C CNN
+	1    6750 5050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6750 5200 6750 5300
+$Comp
+L power:GND #PWR?
+U 1 1 60987E89
+P 6750 4900
+F 0 "#PWR?" H 6750 4650 50  0001 C CNN
+F 1 "GND" H 6755 4727 50  0000 C CNN
+F 2 "" H 6750 4900 50  0001 C CNN
+F 3 "" H 6750 4900 50  0001 C CNN
+	1    6750 4900
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7500 5300 6750 5300
+Connection ~ 6750 5300
+Wire Wire Line
+	6750 5300 6750 5350
+$Comp
+L power:+3.3V #PWR?
+U 1 1 60987E92
+P 6750 5750
+F 0 "#PWR?" H 6750 5600 50  0001 C CNN
+F 1 "+3.3V" H 6765 5923 50  0000 C CNN
+F 2 "" H 6750 5750 50  0001 C CNN
+F 3 "" H 6750 5750 50  0001 C CNN
+	1    6750 5750
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7500 5300 7500 4300
+Wire Wire Line
+	7500 4300 8550 4300
+$Comp
+L LED:IR26-21C_L110_TR8 D?
+U 1 1 6098888A
+P 5200 4200
+F 0 "D?" H 5193 3945 50  0000 C CNN
+F 1 "IR26-21C_L110_TR8" H 5193 4036 50  0000 C CNN
+F 2 "LED_SMD:LED_1206_3216Metric" H 5200 4400 50  0001 C CNN
+F 3 "http://www.everlight.com/file/ProductFile/IR26-21C-L110-TR8.pdf" H 5200 4200 50  0001 C CNN
+	1    5200 4200
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 6098A09B
+P 4900 4200
+F 0 "R?" V 4693 4200 50  0000 C CNN
+F 1 "10 ohm" V 4784 4200 50  0000 C CNN
+F 2 "" V 4830 4200 50  0001 C CNN
+F 3 "~" H 4900 4200 50  0001 C CNN
+	1    4900 4200
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6098B00A
+P 5350 4200
+F 0 "#PWR?" H 5350 3950 50  0001 C CNN
+F 1 "GND" H 5355 4027 50  0000 C CNN
+F 2 "" H 5350 4200 50  0001 C CNN
+F 3 "" H 5350 4200 50  0001 C CNN
+	1    5350 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+2V5 #PWR?
+U 1 1 6098B739
+P 4750 4200
+F 0 "#PWR?" H 4750 4050 50  0001 C CNN
+F 1 "+2V5" V 4765 4328 50  0000 L CNN
+F 2 "" H 4750 4200 50  0001 C CNN
+F 3 "" H 4750 4200 50  0001 C CNN
+	1    4750 4200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L LED:IR26-21C_L110_TR8 D?
+U 1 1 6098FE04
+P 5250 5600
+F 0 "D?" H 5243 5345 50  0000 C CNN
+F 1 "IR26-21C_L110_TR8" H 5243 5436 50  0000 C CNN
+F 2 "LED_SMD:LED_1206_3216Metric" H 5250 5800 50  0001 C CNN
+F 3 "http://www.everlight.com/file/ProductFile/IR26-21C-L110-TR8.pdf" H 5250 5600 50  0001 C CNN
+	1    5250 5600
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 6098FE0A
+P 4950 5600
+F 0 "R?" V 4743 5600 50  0000 C CNN
+F 1 "10 ohm" V 4834 5600 50  0000 C CNN
+F 2 "" V 4880 5600 50  0001 C CNN
+F 3 "~" H 4950 5600 50  0001 C CNN
+	1    4950 5600
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6098FE10
+P 5400 5600
+F 0 "#PWR?" H 5400 5350 50  0001 C CNN
+F 1 "GND" H 5405 5427 50  0000 C CNN
+F 2 "" H 5400 5600 50  0001 C CNN
+F 3 "" H 5400 5600 50  0001 C CNN
+	1    5400 5600
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+2V5 #PWR?
+U 1 1 6098FE16
+P 4800 5600
+F 0 "#PWR?" H 4800 5450 50  0001 C CNN
+F 1 "+2V5" V 4815 5728 50  0000 L CNN
+F 2 "" H 4800 5600 50  0001 C CNN
+F 3 "" H 4800 5600 50  0001 C CNN
+	1    4800 5600
+	0    -1   -1   0   
+$EndComp
+$EndSCHEMATC
