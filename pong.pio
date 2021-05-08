@@ -8,15 +8,15 @@
 ; GPIO 0 = vsync
 ; GPIO 1 = trigger horizontal draw
 ;
-.program blinky    
+.program vertical    
 .side_set 2 opt
     pull block
-    mov isr, osr    ; store this persistently, 7,999 - 3 setup clocks
+    mov isr, osr         ; store this persistently
 .wrap_target    
     
 ; Visible Area
     pull block
-    out y, 32           ; 479
+    out y, 32            ; 479
 
 VisibleArea2:    
     set pins, 2          ; trigger horizontal line
@@ -32,20 +32,20 @@ VisibleArea1:
     nop [3]
 
     pull block side 2   ; turn on INITIAL hsync only
-    out x, 32           ; 131,999 - 1 setup clock
+    out x, 32
 
 initialHsync:
     jmp x-- initialHsync side 0
 
     pull block side 1   ; turn on hsync only
-    out x, 32           ; 131,999 - 1 setup clock
+    out x, 32
 
 backPorch1:
     jmp x-- backPorch1 
 
 ; vsync
     pull block
-    out x, 32           ; vsync clocks: 7,999 - 3 setup clocks
+    out x, 32           ; vsync clocks
     set pins, 0         ; turn on vsync
 
 vSync:                  ; v sync pulse period
@@ -56,7 +56,7 @@ vSync:                  ; v sync pulse period
 ; front porch
 
     pull block 
-    out x, 32           ; 39,999 - 2 setup clocks
+    out x, 32
 
 frontPorch1:
     jmp x-- frontPorch1
@@ -76,10 +76,10 @@ frontPorch1:
 ; GPIO 1 = wait for horizontal draw start
 ; GPIO 2 = pixel value
 ; GPIO 3 = hsync
-
+;
 .program horizontal
 .side_set 1 opt
-pull block                    ; 639
+pull block
 mov isr, osr
 .wrap_target
     wait 1 pin 1
@@ -139,14 +139,12 @@ hSync1:
 ; GPIO 3 = hsync
 ; GPIO 4 = wait for hsync start
 ;
-; static uint32_t src[] = {479, 7750, 70090, 15992, 262145};
-;
 .program hsync
 .side_set 1 opt
     pull block
 .wrap_target
     wait 1 pin 0
-    mov x, osr [3]        ; 3,279 - 2 setup clocks
+    mov x, osr [3]
 
 ; Visible + front porch delay
 topDelay:
@@ -171,7 +169,7 @@ backPorch:
 
 
 % c-sdk {
-void blink_program_init(PIO pio, uint sm, uint offset, uint pin, uint pin_side) {
+void vertical_program_init(PIO pio, uint sm, uint offset, uint pin, uint pin_side) {
    pio_gpio_init(pio, pin); // needed if pin is output
    pio_gpio_init(pio, pin+1);
    pio_sm_set_consecutive_pindirs(pio, sm, pin, 2, true); // set pin to output
@@ -180,7 +178,7 @@ void blink_program_init(PIO pio, uint sm, uint offset, uint pin, uint pin_side) 
    pio_gpio_init(pio, pin_side+1); // needed if pin is output
    pio_sm_set_consecutive_pindirs(pio, sm, pin_side, 2, true); // set pin to output
 
-   pio_sm_config c = blinky_program_get_default_config(offset);
+   pio_sm_config c = vertical_program_get_default_config(offset);
    sm_config_set_sideset_pins(&c, pin_side);
    sm_config_set_set_pins(&c, pin, 2);
    pio_sm_init(pio, sm, offset, &c);
@@ -206,11 +204,6 @@ void hsync_program_init(PIO pio, uint sm, uint offset, uint pin, uint pin_side) 
    pio_sm_config c = hsync_program_get_default_config(offset);
    sm_config_set_sideset_pins(&c, pin_side);
    sm_config_set_in_pins(&c, pin);
-   pio_sm_init(pio, sm, offset, &c);
-}
-
-void trigger_pio_interrupt_init(PIO pio, uint sm, uint offset) {
-   pio_sm_config c = blinky_program_get_default_config(offset);
    pio_sm_init(pio, sm, offset, &c);
 }
 
