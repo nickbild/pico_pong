@@ -1,7 +1,5 @@
 # Pico Pong
 
-Coming soon!
-
 Play gesture-controlled Pong with a Raspberry Pi Pico!
 
 ## How It Works
