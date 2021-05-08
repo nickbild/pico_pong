@@ -29,6 +29,9 @@ The gesture controller:
 The Pico and VGA breakout board:
 ![Pico](https://raw.githubusercontent.com/nickbild/pico_pong/main/media/20210507_190134_sm.jpg)
 
+Schematic:
+![Schematic](https://raw.githubusercontent.com/nickbild/pico_pong/main/media/schematic.svg)
+
 ## Bill of Materials
 
 - 1 x Raspberry Pi Pico
